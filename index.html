@@ -338,28 +338,36 @@
          * Główna funkcja do renderowania całego portfolio
          */
         function renderPortfolio() {
-            portfolioData.forEach(sectionData => {
-                const sectionElement = document.getElementById(sectionData.sectionId);
-                if (!sectionElement) {
-                    console.warn(`Nie znaleziono sekcji o ID: ${sectionData.sectionId}`);
-                    return; // Przejdź do następnej sekcji
-                }
-                
-                const gridContainer = sectionElement.querySelector('.grid');
-                if (!gridContainer) {
-                    console.warn(`Nie znaleziono kontenera grid w sekcji: ${sectionData.sectionId}`);
-                    return; // Przejdź do następnej sekcji
-                }
-
-                // Wygeneruj HTML dla wszystkich filmów w tej sekcji
-                const videosHtml = sectionData.videos
-                                      .map((video, index) => createVideoArticle(video, index))
-                                      .join('');
-                                      
-                // Wstrzyknij gotowy HTML do kontenera grid
-                gridContainer.innerHTML = videosHtml;
-            });
+		portfolioData.forEach(sectionData => {
+        const sectionElement = document.getElementById(sectionData.sectionId);
+        if (!sectionElement) {
+            console.warn(`Nie znaleziono sekcji o ID: ${sectionData.sectionId}`);
+            return;
         }
+
+        const gridContainer = sectionElement.querySelector('.grid');
+        if (!gridContainer) {
+            console.warn(`Nie znaleziono kontenera grid w sekcji: ${sectionData.sectionId}`);
+            return;
+        }
+
+        // Wygeneruj HTML dla wszystkich filmów w tej sekcji
+        const videosHtml = sectionData.videos
+                              .map((video, index) => createVideoArticle(video, index))
+                              .join('');
+
+        // Wstrzyknij gotowy HTML do kontenera grid
+        gridContainer.innerHTML = videosHtml;
+
+        // Jeśli jest tylko jeden film – wyśrodkuj go na desktopie
+        if (sectionData.videos.length === 1) {
+            gridContainer.classList.remove("md:grid-cols-2");
+            gridContainer.classList.add("md:flex", "md:justify-center");
+            gridContainer.querySelector("article").classList.add("max-w-3xl");
+        }
+    });
+}
+
 
 
         // --- Główna logika skryptu po załadowaniu strony ---
