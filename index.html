@@ -1,436 +1,957 @@
 <!DOCTYPE html>
-<html lang="pl" class="scroll-smooth">
+<html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio Wideo | Maciej Hebel</title>
-    
-    <!-- Ładowanie Tailwind CSS z CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Ładowanie nowoczesnej czcionki "Inter" z Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio – Twórca Wideo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --bg2: #111115;
+    --bg3: #18181f;
+    --surface: #1c1c24;
+    --border: rgba(255,255,255,0.06);
+    --accent: #10b981;
+    --accent2: #059669;
+    --text: #f0ede8;
+    --muted: #888896;
+    --grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  }
 
-    <style>
-        /* Ustawienie domyślnej czcionki */
-        body {
-            font-family: 'Inter', sans-serif;
-            /* Tło na wypadek wolnego ładowania */
-            background-color: #111827; 
-        }
-        
-        /* Drobne ulepszenie dla paska przewijania w Firefox */
-        html {
-            scrollbar-color: #374151 #111827;
-        }
+  * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
 
-        /* Stylizacja paska przewijania dla przeglądarek Webkit (Chrome, Safari, Edge) */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #111827; /* Kolor tła paska */
-        }
-        ::-webkit-scrollbar-thumb {
-            background-color: #374151; /* Kolor suwaka */
-            border-radius: 6px;
-            border: 2px solid #111827; /* Odstęp suwaka od krawędzi */
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background-color: #4b5563; /* Suwak po najechaniu */
-        }
+  html { scroll-behavior: smooth; }
 
-        /* Style do animacji na scroll */
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-            will-change: opacity, transform; /* Optymalizacja wydajności */
-        }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
 
-        /* Klasa dodawana przez JavaScript */
-        .is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.25s, height 0.25s, background 0.25s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed;
+    top: 0; left: 0;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(16,185,129,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.18s ease, width 0.3s, height 0.3s, border-color 0.3s;
+  }
+  .cursor.hovering { width: 18px; height: 18px; }
+  .cursor-ring.hovering { width: 60px; height: 60px; border-color: var(--accent); }
+
+  /* GRAIN OVERLAY */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: var(--grain);
+    background-size: 128px 128px;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.65;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    padding: 22px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(10,10,12,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(0px);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  @media(max-width:640px) {
+    nav { padding: 18px 24px; }
+    .nav-links { display: none; }
+  }
+
+  /* HERO / ABOUT */
+  #about {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg-line {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+  .hero-bg-line:nth-child(1) { left: 25%; }
+  .hero-bg-line:nth-child(2) { left: 50%; }
+  .hero-bg-line:nth-child(3) { left: 75%; }
+
+  .hero-glow {
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(16,185,129,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .about-inner {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    align-items: center;
+  }
+
+  .about-text { }
+  .about-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .about-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 7vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.35s forwards;
+  }
+  .about-name span {
+    display: block;
+    background: linear-gradient(135deg, var(--text) 40%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .about-role {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    color: var(--muted);
+    margin-bottom: 36px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .about-desc {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: rgba(240,237,232,0.7);
+    max-width: 480px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.65s forwards;
+	text-align: justify;
+  }
+
+  .about-photos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeIn 1s 0.8s forwards;
+  }
+  .photo-card {
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .photo-card:first-child {
+    grid-column: 1 / -1;
+    aspect-ratio: 16 / 9;
+    height: auto;
+  }
+  .photo-card:not(:first-child) {
+    aspect-ratio: 9 / 16;
+    height: auto;
+  }
+  .photo-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(20%) brightness(0.85);
+    transition: filter 0.4s, transform 0.5s;
+  }
+  .photo-card:hover img { filter: grayscale(0%) brightness(1); transform: scale(1.04); }
+  .photo-card-label {
+    position: absolute;
+    bottom: 12px; left: 12px;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: rgba(10,10,12,0.75);
+    padding: 4px 10px;
+    border-radius: 2px;
+    color: var(--muted);
+  }
+
+  @media(max-width: 900px) {
+    .about-inner {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+    .about-photos { grid-template-columns: 1fr 1fr; }
+    .photo-card:first-child { aspect-ratio: 16 / 9; }
+    .photo-card:not(:first-child) { aspect-ratio: 9 / 16; }
+    #about { padding: 110px 24px 70px; }
+  }
+
+  /* DIVIDER */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 0 48px;
+    margin-bottom: 64px;
+  }
+  .section-divider hr {
+    flex: 1;
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+  .section-divider-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  @media(max-width:640px) {
+    .section-divider { padding: 0 24px; }
+  }
+
+  /* PORTFOLIO GRID */
+  #portfolio {
+    padding: 0 48px 100px;
+  }
+  .portfolio-header {
+    max-width: 1200px;
+    margin: 0 auto 56px;
+  }
+  .portfolio-header h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+  .portfolio-header p {
+    color: var(--muted);
+    margin-top: 12px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .video-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+  @media(max-width: 760px) {
+    .video-grid { grid-template-columns: 1fr; }
+    #portfolio { padding: 0 24px 80px; }
+    .portfolio-header { margin-bottom: 40px; }
+  }
+
+  .video-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.35s, transform 0.35s, box-shadow 0.35s;
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  .video-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.35s, box-shadow 0.35s;
+  }
+  .video-card:hover {
+    border-color: rgba(16,185,129,0.25);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(16,185,129,0.1);
+  }
+
+  .video-embed-wrap {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: #000;
+  }
+  .video-embed-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  /* TVP Card */
+  .tvp-card-link {
+    display: block;
+    text-decoration: none;
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: linear-gradient(135deg, #0d1117 0%, #1a1f2e 100%);
+    overflow: hidden;
+  }
+  .tvp-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+  }
+  .tvp-logo-wrap {
+    width: 72px; height: 72px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .tvp-card-link:hover .tvp-logo-wrap {
+    background: rgba(16,185,129,0.15);
+    transform: scale(1.1);
+  }
+  .tvp-play-icon {
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 14px 0 14px 26px;
+    border-color: transparent transparent transparent var(--accent);
+    margin-left: 5px;
+  }
+  .tvp-badge {
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+  .tvp-shine {
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.03) 50%, transparent 60%);
+    transition: left 0.5s;
+  }
+  .tvp-card-link:hover .tvp-shine { left: 160%; }
+
+  /* TikTok link card */
+  .tiktok-card-link {
+    display: block;
+    text-decoration: none;
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: linear-gradient(135deg, #010101 0%, #1a0a14 100%);
+    overflow: hidden;
+  }
+  .tiktok-card-link:hover .tvp-logo-wrap {
+    background: rgba(16,185,129,0.15);
+    transform: scale(1.1);
+  }
+  .tiktok-card-link:hover .tvp-shine { left: 160%; }
+  .tiktok-platform-badge {
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  .card-body {
+    padding: 20px 22px 24px;
+  }
+  .card-title {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    line-height: 1.3;
+    color: var(--text);
+  }
+  .card-desc {
+    font-size: 0.83rem;
+    line-height: 1.65;
+    color: var(--muted);
+	text-align: justify;
+  }
+  .card-ext-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 10px;
+  }
+  .card-ext-badge svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+  /* CONTACT */
+  #contact {
+    padding: 0 48px 120px;
+  }
+  .contact-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+  .contact-inner.visible { opacity: 1; transform: none; }
+  .contact-tagline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 6vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: 0.03em;
+  }
+  .contact-tagline em {
+    display: block;
+    font-style: italic;
+    font-family: 'DM Serif Display', serif;
+    font-size: 0.55em;
+    letter-spacing: 0;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+  .contact-right { }
+  .contact-right h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+  }
+  .contact-right p {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: rgba(240,237,232,0.65);
+    margin-bottom: 36px;
+  }
+  .btn-mailto {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 16px 36px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-radius: 3px;
+    transition: background 0.3s, transform 0.25s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-mailto::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-110%);
+    transition: transform 0.4s;
+    skewX: -15deg;
+  }
+  .btn-mailto:hover::before { transform: translateX(110%); }
+  .btn-mailto:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(16,185,129,0.3); }
+  .btn-mailto svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+  .contact-buttons { display: flex; flex-direction: column; gap: 12px; }
+  .btn-copy {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 16px 36px;
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid rgba(16,185,129,0.35);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-radius: 3px;
+    transition: background 0.3s, transform 0.25s, box-shadow 0.3s, border-color 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-copy::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(16,185,129,0.06);
+    transform: translateX(-110%);
+    transition: transform 0.4s;
+  }
+  .btn-copy:hover::before { transform: translateX(110%); }
+  .btn-copy:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(16,185,129,0.15); }
+  .btn-copy.copied { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .btn-copy svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+  @media(max-width:900px) {
+    .contact-inner { grid-template-columns: 1fr; gap: 40px; }
+    #contact { padding: 0 24px 80px; }
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+  }
+  @media(max-width:640px) {
+    footer { padding: 24px; flex-direction: column; gap: 10px; text-align: center; }
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
 </head>
-<body class="bg-gradient-to-b from-gray-900 via-blue-950 to-gray-900 text-gray-200 min-h-screen">
+<body>
 
-    <!-- 
-      Navbar 
-    -->
-    <nav class="sticky top-0 z-50 w-full bg-gray-900/80 backdrop-blur-md border-b border-gray-700/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Lewa strona: Nazwa (link do góry) -->
-                <a href="#home" class="text-2xl font-bold text-white hover:text-blue-400 transition-colors">
-                    Maciej Hebel
-                </a>
-                
-                <!-- Prawa strona: Linki do sekcji -->
-                <div class="hidden sm:flex sm:space-x-6">
-                    <a href="#mp2024" class="text-gray-300 hover:text-blue-400 transition-colors font-medium">MP 2024</a>
-                    <a href="#edycja" class="text-gray-300 hover:text-blue-400 transition-colors font-medium">Edycja</a>
-                    <a href="#camp2025" class="text-gray-300 hover:text-blue-400 transition-colors font-medium">Camp 2025</a>
-                    <a href="#youtube" class="text-gray-300 hover:text-blue-400 transition-colors font-medium">YouTube</a>
-                    <a href="#mp2023" class="text-gray-300 hover:text-blue-400 transition-colors font-medium">MP 2023</a>
-                    <a href="#kontakt" class="text-gray-300 hover:text-blue-400 transition-colors font-medium">Kontakt</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
-    <!-- Główny kontener strony -->
-    <div class="max-w-7xl mx-auto p-4 sm:p-8">
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo" id="navLogo"></a>
+  <ul class="nav-links">
+    <li><a href="#about">O mnie</a></li>
+    <li><a href="#portfolio">Realizacje</a></li>
+    <li><a href="#contact">Kontakt</a></li>
+  </ul>
+</nav>
 
-        <!-- Nagłówek / Informacje o autorze -->
-        <header id="home" class="my-16 sm:my-24 text-center animate-on-scroll">
-            <h1 class="text-5xl font-bold text-white mb-4">Maciej Hebel</h1>
-            <p class="text-2xl text-blue-400 mb-6">Twórca Wideo & Motion Designer</p>
-            <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-300">
-                Witaj w moim portfolio. Specjalizuję się w tworzeniu angażujących treści wideo, od dynamicznych reklam po reportaże wideo. Poniżej znajdziesz moje wybrane prace.
-            </p>
-        </header>
-
-        <!-- 
-          Sekcja 1: MP 2024
-          TREŚĆ TEJ SEKCJI JEST GENEROWANA PRZEZ JAVASCRIPT
-        -->
-        <section id="mp2024" class="py-16 sm:py-24 border-t border-gray-700">
-            <h2 class="text-4xl font-bold text-center mb-16 text-white animate-on-scroll">Mistrzostwa Polski w Speedcubingu 2024</h2>
-            <!-- Kontener na dynamicznie ładowane filmy -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 max-w-6xl mx-auto">
-                <!-- Filmy zostaną wstrzyknięte tutaj przez JS -->
-            </div>
-        </section>
-
-        <!-- 
-          Sekcja 2: Edycja i Animacje 
-          TREŚĆ TEJ SEKCJI JEST GENEROWANA PRZEZ JAVASCRIPT
-        -->
-        <section id="edycja" class="py-16 sm:py-24 border-t border-gray-700">
-            <h2 class="text-4xl font-bold text-center mb-16 text-white animate-on-scroll">Edycja i Animacje</h2>
-            <!-- Kontener na dynamicznie ładowane filmy -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 max-w-6xl mx-auto">
-                <!-- Filmy zostaną wstrzyknięte tutaj przez JS -->
-            </div>
-        </section>
-
-        <!-- 
-          Sekcja 3: Camp 2025 
-          TREŚĆ TEJ SEKCJI JEST GENEROWANA PRZEZ JAVASCRIPT
-        -->
-        <section id="camp2025" class="py-16 sm:py-24 border-t border-gray-700">
-            <h2 class="text-4xl font-bold text-center mb-16 text-white animate-on-scroll">Speedcubing Summer Camp 2025</h2>
-            <!-- Kontener na dynamicznie ładowane filmy -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 max-w-6xl mx-auto">
-                <!-- Filmy zostaną wstrzyknięte tutaj przez JS -->
-            </div>
-        </section>
-
-        <!-- 
-          Sekcja 4: YouTube 
-          TREŚĆ TEJ SEKCJI JEST GENEROWANA PRZEZ JAVASCRIPT
-        -->
-        <section id="youtube" class="py-16 sm:py-24 border-t border-gray-700">
-            <h2 class="text-4xl font-bold text-center mb-16 text-white animate-on-scroll">YouTube</h2>
-            <!-- Kontener na dynamicznie ładowane filmy -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 max-w-6xl mx-auto">
-                <!-- Filmy zostaną wstrzyknięte tutaj przez JS -->
-            </div>
-        </section>
-
-        <!-- 
-          Sekcja 5: MP 2023 
-          TREŚĆ TEJ SEKCJI JEST GENEROWANA PRZEZ JAVASCRIPT
-        -->
-        <section id="mp2023" class="py-16 sm:py-24 border-t border-gray-700">
-            <h2 class="text-4xl font-bold text-center mb-16 text-white animate-on-scroll">Mistrzostwa Polski w Speedcubingu 2023</h2>
-            <!-- Kontener na dynamicznie ładowane filmy -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 max-w-6xl mx-auto">
-                <!-- Filmy zostaną wstrzyknięte tutaj przez JS -->
-            </div>
-        </section>
-
-        <!-- SEKCJA: Kontakt (pozostaje statyczna) -->
-        <section id="kontakt" class="py-16 sm:py-24 border-t border-gray-700 text-center">
-            <h2 class="text-4xl font-bold text-center mb-8 text-white animate-on-scroll">Skontaktuj się</h2>
-            <p class="text-lg text-gray-300 max-w-xl mx-auto mb-8 animate-on-scroll" style="transition-delay: 100ms;">
-                Masz pomysł na projekt lub chcesz nawiązać współpracę? Z przyjemnością omówię szczegóły i dopasuję się do twoich potrzeb.
-            </p>
-            <div class="animate-on-scroll" style="transition-delay: 200ms;">
-                <a href="mailto:maciejhebel1@gmail.com" 
-                   class="inline-block bg-blue-600 text-white font-bold text-lg py-3 px-8 rounded-lg hover:bg-blue-500 transition-colors shadow-lg shadow-blue-600/30">
-                   Napisz do mnie
-                </a>
-            </div>
-            <p class="text-base text-gray-300 max-w-xl mx-auto mb-8 animate-on-scroll mt-3" style="transition-delay: 100ms;">
-                maciejhebel1@gmail.com
-            </p>
-        </section>
-
+<!-- ABOUT -->
+<section id="about">
+  <div class="hero-bg-line"></div>
+  <div class="hero-bg-line"></div>
+  <div class="hero-bg-line"></div>
+  <div class="hero-glow"></div>
+  <div class="about-inner">
+    <div class="about-text">
+      <p class="about-eyebrow" id="aboutEyebrow"></p>
+      <h1 class="about-name" id="aboutName"></h1>
+      <p class="about-role" id="aboutRole"></p>
+      <p class="about-desc" id="aboutDesc"></p>
     </div>
+    <div class="about-photos" id="aboutPhotos"></div>
+  </div>
+</section>
 
-    <!-- Stopka -->
-    <footer class="text-center py-10 mt-0 border-t border-gray-700/50">
-        <p class="text-gray-500">&copy; 2025 Maciej Hebel. Wszelkie prawa zastrzeżone.</p>
-    </footer>
+<!-- DIVIDER -->
+<div class="section-divider">
+  <hr>
+  <span class="section-divider-label">Realizacje</span>
+  <hr>
+</div>
 
-    <!-- 
-      Skrypt JS 
-    -->
-    <script>
-        // ========================================================================
-        //
-        //  STRUKTURA DANYCH PORTFOLIO
-        //  Tutaj możesz edytować, dodawać i usuwać filmy.
-        //  - sectionId: musi pasować do ID sekcji w HTML (np. "mp2024")
-        //  - videoId: identyfikator filmu z YouTube (np. "KhzPz1EbjRw")
-        //  - embedHost: (opcjonalnie) użyj "youtube-noocookie.com", jeśli zależy Ci na prywatności
-        //  - fullEmbedSrc: (opcjonalnie) Pełny link do odtwarzacza (np. dla Vimeo)
-        //  - externalLink: (opcjonalnie) Zastępuje odtwarzacz linkiem do nowej karty (np. dla TVP VOD)
-        //
-        // ========================================================================
-        const portfolioData = [
-            {
-                sectionId: "mp2024",
-                videos: [
-                    {
-                        videoId: "EfyguWTAwz4",
-                        embedHost: "youtube.com",
-                        title: "Mistrzostwa Polski w Speedcubingu 2024 - Relacja",
-                        description: "Oficjalne podsumowanie Mistrzostw Polski 2024. Cały projekt wykonany przeze mnie, skrypt dla lektora, scenariusz, ujęcia (z wyłączeniem materiałów z drona i z Mistrzostw Europy), montaż i korekcja kolorów."
-                    },
-                    {
-                        // Zmiana: Zamiast fullEmbedSrc, używamy externalLink
-                        externalLink: "https://vod.tvp.pl/informacje-i-publicystyka,205/magazyn-ekspresu-reporterow-odcinki,273697/odcinek-1026,S02E1026,1842171",
-                        title: "Magazyn Ekspresu Reporterów - Odc. 1026",
-                        description: "Reportaż z dotyczący kostki Rubika wyemitowany w TVP wykorzystujący część moich ujęć. <br><b>(Materiał rozpoczyna się w 35:33)</b>"
-                    },
-                    {
-                        videoId: "bAYdJ2JsZXo",
-                        embedHost: "youtube.com",
-                        title: "Mistrzostwa Polski w Speedcubingu 2024 - Materiał Promocyjny MOKATE",
-                        description: "Materiał Promocyjny dla firmy MOKATE z Mistrzostw Polski w Speedcubingu 2024. Również całkowicie mojego autorstwa."
-                    },
-                    // Aby dodać kolejny film do tej sekcji, skopiuj obiekt powyżej
-                    // i wklej go tutaj, zmieniając dane:
-                    // {
-                    //    videoId: "NOWY_ID_FILMU",
-                    //    title: "Nowy Tytuł",
-                    //    description: "Nowy Opis."
-                    // },
-                ]
-            },
-            
-            {
-                sectionId: "edycja",
-                videos: [
-                    {
-                        videoId: "z5EwPjm4fak", // Zastąp tymczasowy link
-                        title: "Dynamiczny Montaż i Animacje",
-                        description: "Przykład moich umiejętności w zakresie dynamicznego montażu i motion designu. Film wykonany w języku angielskim, ze względu na dotarcie do szerszego grona odbiorców."
-                    }
-                ]
-            },
-            {
-                sectionId: "camp2025",
-                videos: [
-                    {
-                        videoId: "p80Y7hjNxY4", // Zastąp tymczasowy link
-                        title: "Speedcubing Summer Camp 2025 - Relacja",
-                        description: "Reportaż wykonany w ramach promocji obozu układania kostki Rubika na czas. Produkcja w całości mojego autorstwa, włącznie z ujęciami z powiertrza."
-                    }
-                ]
-            },
-            {
-                sectionId: "youtube",
-                videos: [
-                    {
-                        videoId: "3Q6Vmx5RtcQ",
-                        title: "Materiał Na Kanał DżoDżo na YouTube",
-                        description: "Reportaż z Mistrzostw Europy w Speedcubingu 2024. Projekt realizowany we współpracy z marką SONY, w którym miałem okazję brać udział w roli drugiego operatora."
-                    }
-                ]
-            },
-            {
-                sectionId: "mp2023",
-                videos: [
-                    {
-                        videoId: "rd9vlDyprT8",
-                        title: "Mistrzostwa Polski w Speedcubingu 2023 - Reportaż",
-                        description: "Film podsumowujący mistrzostwa w 2023 roku. Pełna produkcja i postprodukcja w moim wykonaniu."
-                    }
-                ]
-            }
-        ];
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="portfolio-header">
+    <h2>Wybrane <br>projekty</h2>
+    <p>Produkcje, przy których miałem przyjemność pracować.</p>
+  </div>
+  <div class="video-grid" id="videoGrid"></div>
+</section>
 
-        
-        /**
-         * Funkcja pomocnicza do tworzenia kodu HTML dla pojedynczego filmu
-         */
-        function createVideoArticle(video, index) {
-            const delay = index * 100; // Dynamiczne opóźnienie animacji
-            let playerOrLinkHtml; // Zmienna na odtwarzacz LUB link
+<!-- DIVIDER -->
+<div class="section-divider">
+  <hr>
+  <span class="section-divider-label">Kontakt</span>
+  <hr>
+</div>
 
-            // PRIORYTET 1: Sprawdź, czy to link zewnętrzny (np. TVP VOD)
-            if (video.externalLink) {
-                playerOrLinkHtml = `
-                    <a href="${video.externalLink}" 
-                       target="_blank" 
-                       rel="noopener noreferrer" 
-                       class="aspect-video w-full rounded-lg bg-gray-800 flex flex-col items-center justify-center text-center p-6 hover:bg-gray-700 transition-colors shadow-2xl shadow-blue-500/10">
-                        
-                        <!-- Elegancka ikona "Play" z Tailwind -->
-                        <svg class="w-16 h-16 text-blue-400 mb-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-                        
-                        <span class="text-xl font-semibold text-white">Obejrzyj w TVP VOD</span>
-                        <span class="text-gray-400 text-sm mt-1">Otworzy się w nowej karcie</span>
-                    </a>
-                `;
-            } 
-            // PRIORYTET 2: W przeciwnym razie, stwórz odtwarzacz embed
-            else {
-                let embedSrc;
-                let referrerPolicy = 'strict-origin-when-cross-origin'; // Domyślna dla YouTube
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner" id="contactInner">
+    <div class="contact-tagline" id="contactTagline"></div>
+    <div class="contact-right">
+      <h3 id="contactHeading"></h3>
+      <p id="contactDesc"></p>
+      <div class="contact-buttons">
+        <a class="btn-mailto" id="contactBtn">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span id="contactBtnLabel"></span>
+        </a>
+        <button class="btn-copy" id="copyEmailBtn">
+          <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span id="copyEmailLabel">Kopiuj adres email</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
 
-                if (video.fullEmbedSrc) {
-                    embedSrc = video.fullEmbedSrc;
-                    referrerPolicy = 'no-referrer-when-downgrade'; // Łagodniejsza dla innych embedów (np. Vimeo)
-                } else {
-                    const host = video.embedHost || "youtube.com";
-                    embedSrc = `https://www.${host}/embed/${video.videoId}?v=1`;
-                }
-                
-                playerOrLinkHtml = `
-                    <div class="aspect-video w-full rounded-lg overflow-hidden shadow-2xl shadow-blue-500/10">
-                        <iframe 
-                            src="${embedSrc}" 
-                            title="Video player" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen 
-                            class="w-full h-full" 
-                            referrerpolicy="${referrerPolicy}">
-                        </iframe>
-                    </div>
-                `;
-            }
+<footer>
+  <span id="footerName"></span>
+  <span id="footerYear"></span>
+</footer>
 
-            // Zwróć szablon HTML całego artykułu, wstawiając playerOrLinkHtml
-            return `
-                <article class="flex flex-col animate-on-scroll" style="transition-delay: ${delay}ms;">
-                    ${playerOrLinkHtml} <!-- TUTAJ WSTAWIAMY LINK LUB ODTWARZACZ -->
-                    <div class="mt-5">
-                        <h3 class="text-2xl font-semibold text-gray-100 mb-2">${video.title}</h3>
-                        <p class="text-gray-400 text-base">
-                            ${video.description}
-                        </p>
-                    </div>
-                </article>
-            `;
-        }
+<script>
+/* ============================================================
+   DANE STRONY – EDYTUJ TU
+   ============================================================ */
 
-        /**
-         * Główna funkcja do renderowania całego portfolio
-         */
-        function renderPortfolio() {
-		portfolioData.forEach(sectionData => {
-        const sectionElement = document.getElementById(sectionData.sectionId);
-        if (!sectionElement) {
-            console.warn(`Nie znaleziono sekcji o ID: ${sectionData.sectionId}`);
-            return;
-        }
+const ABOUT = {
+  eyebrow: "Twórca treści wideo",
+  firstName: "Maciej",
+  lastName: "Hebel",
+  role: "Operator & Montażysta",
+  description: "Specjalizuję się w tworzeniu angażujących treści wideo, od dynamicznych reklam po reportaże. Nieustannie rozwijam swoje umiejętności studiując Produkcję Form Audiowizualnych na Uniwersytecie Gdańskim, angażując się w projekty studenckie i rozbudowując swoje doświadczenie. Poniżej znajdziesz moje wybrane prace.",
+  photos: [
+    {
+      src: "h1.jpg",
+      label: "Gimbal"
+    },
+    {
+      src: "v1.png",
+      label: "Camera rig"
+    },
+    {
+      src: "v2.png",
+      label: "Handheld"
+    }
+  ]
+};
 
-        const gridContainer = sectionElement.querySelector('.grid');
-        if (!gridContainer) {
-            console.warn(`Nie znaleziono kontenera grid w sekcji: ${sectionData.sectionId}`);
-            return;
-        }
+const CONTACT = {
+  tagline: "Zróbmy\ncoś\nrazem.",
+  taglineItalic: "Napisz do mnie",
+  heading: "Masz projekt? Porozmawiajmy.",
+  description: "Jestem otwarty na współpracę przy produkcjach wideo, montażu, projektach dokumentalnych oraz treściach dla marek. Odpisuję w ciągu 24 godzin.",
+  email: "maciejhebel1@gmail.com",
+  btnLabel: "Napisz wiadomość"
+};
 
-        // Wygeneruj HTML dla wszystkich filmów w tej sekcji
-        const videosHtml = sectionData.videos
-                              .map((video, index) => createVideoArticle(video, index))
-                              .join('');
+/* ============================================================
+   FILMY – dodawaj nowe obiekty do tej tablicy
+   source: "youtube", "tvp" lub "tiktok"
+   link: URL do YouTube, TVP VOD lub TikToka
+   title: tytuł
+   description: krótki opis
+   ============================================================ */
 
-        // Wstrzyknij gotowy HTML do kontenera grid
-        gridContainer.innerHTML = videosHtml;
+const VIDEOS = [
+  {
+    source: "youtube",
+    link: "https://www.youtube.com/watch?v=bfsCjREIi98",
+    title: "CHAI | Gastronomiczna Rolka Pokazowa",
+    description: "Autorski showreel gastronomiczny pokazujący moje umiejętności realizacji krótkich form wideo."
+  },
+  {
+    source: "youtube",
+    link: "https://www.youtube.com/watch?v=z5EwPjm4fak&t",
+    title: "Showreel Montażowy",
+    description: "Przykład moich umiejętności w zakresie dynamicznego montażu i motion designu. Film wykonany w języku angielskim, ze względu na dotarcie do szerszego grona odbiorców."
+  },
+  {
+    source: "youtube",
+    link: "https://youtu.be/tnjwSxovDqw",
+    title: "Mistrzostwa Polski w Speedcubingu 2025",
+    description: "Oficjalny reportaż z Mistrzostw Polski 2025 na zlecenie organizatorów. Cały projekt jest autorski, od pracy twórczej, poprzez sfilmowanie wydarzenia, aż po montaż i koloryzację."
+  },
+  {
+    source: "youtube",
+    link: "https://www.youtube.com/watch?v=p80Y7hjNxY4",
+    title: "Speedcubing Summer Camp 2025",
+    description: "Reportaż wykonany w ramach promocji obozu układania kostki Rubika na czas. Produkcja w całości mojego autorstwa, włącznie z ujęciami z powiertrza."
+  },
+  {
+    source: "youtube",
+    link: "https://www.youtube.com/watch?v=3Q6Vmx5RtcQ",
+    title: "Materiał Na Kanał DżoDżo na YouTube",
+    description: "Reportaż z Mistrzostw Europy w Speedcubingu 2024. Projekt realizowany we współpracy z marką SONY, w którym miałem okazję brać udział w roli drugiego operatora."
+  },
+  {
+    source: "youtube",
+    link: "https://www.youtube.com/watch?v=bAYdJ2JsZXo",
+    title: "Materiał Promocyjny MOKATE",
+    description: "Materiał Promocyjny dla firmy MOKATE z Mistrzostw Polski w Speedcubingu 2024. Również całkowicie mojego autorstwa."
+  },
+  {
+    source: "tvp",
+    link: "https://vod.tvp.pl/informacje-i-publicystyka,205/magazyn-ekspresu-reporterow-odcinki,273697/odcinek-1026,S02E1026,1842171",
+    title: "Magazyn Ekspresu Reporterów TVP - Odc. 1026",
+    description: "Reportaż emitowany na antenie Telewizji Polskiej dotyczący kostki Rubika wykorzystujący część moich ujęć. Materiał rozpoczyna się w 35:33"
+  },
+  {
+    source: "tiktok",
+    link: "https://www.tiktok.com/@lukaszorion_/video/7611170521107025174",
+    title: "Treści Short Form",
+    description: "Krótka forma wideo przygotowana na platformę TikTok o tematyce biegowej."
+  },
+];
 
-        // Jeśli jest tylko jeden film – wyśrodkuj go na desktopie
-        if (sectionData.videos.length === 1) {
-            gridContainer.classList.remove("md:grid-cols-2");
-            gridContainer.classList.add("md:flex", "md:justify-center");
-            gridContainer.querySelector("article").classList.add("max-w-3xl");
-        }
-    });
+/* ============================================================
+   RENDER
+   ============================================================ */
+
+function getYouTubeId(url) {
+  const match = url.match(/(?:v=|youtu\.be\/|embed\/)([^&?/]+)/);
+  return match ? match[1] : null;
 }
 
+// Nav logo
+document.getElementById('navLogo').textContent = `${ABOUT.firstName} ${ABOUT.lastName}`;
 
+// About
+document.getElementById('aboutEyebrow').textContent = ABOUT.eyebrow;
+document.getElementById('aboutName').innerHTML = `<span>${ABOUT.firstName}</span><span>${ABOUT.lastName}</span>`;
+document.getElementById('aboutRole').textContent = ABOUT.role;
+document.getElementById('aboutDesc').textContent = ABOUT.description;
 
-        // --- Główna logika skryptu po załadowaniu strony ---
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // 1. Wyrenderuj portfolio na podstawie danych
-            renderPortfolio();
+// Photos
+const photosEl = document.getElementById('aboutPhotos');
+ABOUT.photos.forEach(p => {
+  const card = document.createElement('div');
+  card.className = 'photo-card';
+  card.innerHTML = `<img src="${p.src}" alt="${p.label}" loading="lazy"><span class="photo-card-label">${p.label}</span>`;
+  photosEl.appendChild(card);
+});
 
-            // 2. Ustaw logikę płynnego przewijania (scroll)
-            const nav = document.querySelector('nav.sticky');
-            const navHeightOffset = (nav ? nav.offsetHeight : 64) + 24; 
+// Videos
+const grid = document.getElementById('videoGrid');
 
-            const navLinks = document.querySelectorAll('nav a[href^="#"]');
+VIDEOS.forEach((video, i) => {
+  const card = document.createElement('div');
+  card.className = 'video-card';
+  card.style.transitionDelay = `${(i % 2) * 0.1}s`;
 
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    const targetId = this.getAttribute('href').substring(1);
-                    const targetElement = document.getElementById(targetId);
-                    
-                    if (targetElement) {
-                        const elementPosition = targetElement.getBoundingClientRect().top;
-                        const offsetPosition = elementPosition + window.scrollY - navHeightOffset;
+  if (video.source === 'youtube') {
+    const ytId = getYouTubeId(video.link);
+    const embedUrl = `https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1`;
+    card.innerHTML = `
+      <div class="video-embed-wrap">
+        <iframe src="${embedUrl}" allowfullscreen loading="lazy" title="${video.title}"></iframe>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${video.title}</div>
+        <div class="card-desc">${video.description}</div>
+      </div>
+    `;
+  } else if (video.source === 'tvp') {
+    card.innerHTML = `
+      <a class="tvp-card-link" href="${video.link}" target="_blank" rel="noopener noreferrer">
+        <div class="tvp-inner">
+          <div class="tvp-logo-wrap">
+            <div class="tvp-play-icon"></div>
+          </div>
+          <span class="tvp-badge">TVP VOD</span>
+        </div>
+        <div class="tvp-shine"></div>
+      </a>
+      <div class="card-body">
+        <div class="card-title">${video.title}</div>
+        <div class="card-desc">${video.description}</div>
+        <span class="card-ext-badge">
+          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Otworzy się w nowej karcie
+        </span>
+      </div>
+    `;
+  } else if (video.source === 'tiktok') {
+    card.innerHTML = `
+      <a class="tiktok-card-link" href="${video.link}" target="_blank" rel="noopener noreferrer">
+        <div class="tvp-inner">
+          <div class="tvp-logo-wrap">
+            <div class="tvp-play-icon"></div>
+          </div>
+          <span class="tiktok-platform-badge">TikTok</span>
+        </div>
+        <div class="tvp-shine"></div>
+      </a>
+      <div class="card-body">
+        <div class="card-title">${video.title}</div>
+        <div class="card-desc">${video.description}</div>
+        <span class="card-ext-badge">
+          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Otworzy się w nowej karcie
+        </span>
+      </div>
+    `;
+  }
 
-                        window.scrollTo({
-                            top: offsetPosition,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
+  grid.appendChild(card);
+});
 
-            // 3. Ustaw logikę animacji (Intersection Observer)
-            //    Ten kod musi być WYWOŁANY PO renderPortfolio(),
-            //    aby mógł znaleźć nowe elementy .animate-on-scroll
-            
-            const animatedElements = document.querySelectorAll('.animate-on-scroll');
+// Contact
+const taglineLines = CONTACT.tagline.split('\n');
+const taglineEl = document.getElementById('contactTagline');
+taglineLines.forEach(line => {
+  const span = document.createElement('span');
+  span.style.display = 'block';
+  span.textContent = line;
+  taglineEl.appendChild(span);
+});
+const emEl = document.createElement('em');
+emEl.textContent = CONTACT.taglineItalic;
+taglineEl.appendChild(emEl);
 
-            if ("IntersectionObserver" in window) {
-                const observer = new IntersectionObserver((entries, observer) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('is-visible');
-                            observer.unobserve(entry.target); 
-                        }
-                    });
-                }, {
-                    threshold: 0.1 // Uruchom, gdy 10% elementu jest widoczne
-                });
+document.getElementById('contactHeading').textContent = CONTACT.heading;
+document.getElementById('contactDesc').textContent = CONTACT.description;
+const btn = document.getElementById('contactBtn');
+btn.href = `mailto:${CONTACT.email}`;
+btn.querySelector('#contactBtnLabel').textContent = CONTACT.btnLabel;
 
-                animatedElements.forEach(element => {
-                    observer.observe(element);
-                });
+// Copy email button
+const copyBtn = document.getElementById('copyEmailBtn');
+const copyLabel = document.getElementById('copyEmailLabel');
+copyBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(CONTACT.email).then(() => {
+    copyLabel.textContent = 'Skopiowano';
+    copyBtn.classList.add('copied');
+    setTimeout(() => {
+      copyLabel.textContent = 'Kopiuj adres email';
+      copyBtn.classList.remove('copied');
+    }, 2000);
+  });
+});
 
-            } else {
-                // Fallback dla starych przeglądarek
-                animatedElements.forEach(element => {
-                    element.classList.add('is-visible');
-                });
-            }
-        });
-    </script>
+// Footer
+document.getElementById('footerName').textContent = `© ${ABOUT.firstName} ${ABOUT.lastName}`;
+document.getElementById('footerYear').textContent = new Date().getFullYear();
 
+/* ============================================================
+   INTERSECTION OBSERVER – scroll animations
+   ============================================================ */
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.video-card, .contact-inner').forEach(el => observer.observe(el));
+
+/* ============================================================
+   CUSTOM CURSOR
+   ============================================================ */
+
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
+});
+
+function animateRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+document.querySelectorAll('a, button, .video-card, .photo-card').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.classList.add('hovering'); ring.classList.add('hovering'); });
+  el.addEventListener('mouseleave', () => { cursor.classList.remove('hovering'); ring.classList.remove('hovering'); });
+});
+
+// Hide cursor on mobile
+if ('ontouchstart' in window) {
+  cursor.style.display = 'none';
+  ring.style.display = 'none';
+  document.body.style.cursor = 'auto';
+}
+</script>
 </body>
 </html>
