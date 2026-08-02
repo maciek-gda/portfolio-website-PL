@@ -187,7 +187,7 @@
     max-width: 480px;
     opacity: 0;
     animation: fadeUp 0.8s 0.65s forwards;
-	text-align: justify;
+    text-align: justify;
   }
 
   .about-photos {
@@ -324,6 +324,7 @@
     box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(16,185,129,0.1);
   }
 
+  /* Standard Embed (Youtube, IG) */
   .video-embed-wrap {
     position: relative;
     width: 100%;
@@ -337,6 +338,36 @@
     height: 100%;
     border: none;
     display: block;
+  }
+
+  /* Fix for Google Drive Embed */
+  .drive-embed-wrap {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: #000;
+    overflow: hidden;
+  }
+  .drive-embed-wrap iframe {
+    position: absolute;
+    top: -55px; /* Chowa górny pasek nawigacyjny Google Drive */
+    left: 0;
+    width: 100%;
+    height: calc(100% + 55px); /* Rekompensuje uciętą górę */
+    border: none;
+    display: block;
+  }
+  /* Gradient maskujący dolny czarny pasek */
+  .drive-embed-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background: linear-gradient(to bottom, transparent 0%, var(--surface) 100%);
+    pointer-events: none; /* Pozwala na swobodne klikanie w kontrolki pod spodem! */
+    z-index: 10;
   }
 
   /* TVP Card */
@@ -440,7 +471,7 @@
     font-size: 0.83rem;
     line-height: 1.65;
     color: var(--muted);
-	text-align: justify;
+    text-align: justify;
   }
   .card-ext-badge {
     display: inline-flex;
@@ -690,7 +721,7 @@ const ABOUT = {
   firstName: "Maciej",
   lastName: "Hebel",
   role: "Operator & Montażysta",
-  description: "Specjalizuję się w tworzeniu angażujących treści wideo, od dynamicznych reklam po reportaże. Odpowiadam za pełen proces twórczy od planowania i realizacji zdjęć (w tym ujęć z drona), po zaawansowany montaż, tworzenie animacji motion graphics oraz profesjonalną korekcję barwną. Nieustannie rozwijam swoje umiejętności studiując Produkcję Form Audiowizualnych na Uniwersytecie Gdańskim, angażując się w projekty studenckie i rozbudowując swoje doświadczenie. Poniżej znajdziesz moje wybrane prace.",
+  description: "Specjalizuję się w tworzeniu angażujących treści wideo, od dynamicznych reklam po reportaże. Nieustannie rozwijam swoje umiejętności studiując Produkcję Form Audiowizualnych na Uniwersytecie Gdańskim, angażując się w projekty studenckie i rozbudowując swoje doświadczenie. Poniżej znajdziesz moje wybrane prace.",
   photos: [
     {
       src: "h1.jpg",
@@ -718,13 +749,19 @@ const CONTACT = {
 
 /* ============================================================
    FILMY – dodawaj nowe obiekty do tej tablicy
-   source: "youtube", "tvp" lub "tiktok"
-   link: URL do YouTube, TVP VOD lub TikToka
+   source: "youtube", "tvp", "tiktok", "google_drive" lub "instagram"
+   link: URL do zasobu
    title: tytuł
    description: krótki opis
    ============================================================ */
 
 const VIDEOS = [
+    {
+    source: "google_drive",
+    link: "https://drive.google.com/file/d/12frCLZHJIXQSNetVZNeuM3nijbH__BW1/view?usp=sharing",
+    title: "Adiutare",
+    description: "Przykład moich umiejętności w zakresie dynamicznego montażu i motion designu. Film wykonany w języku angielskim, ze względu na dotarcie do szerszego grona odbiorców."
+  },
   {
     source: "youtube",
     link: "https://www.youtube.com/watch?v=bfsCjREIi98",
@@ -772,7 +809,7 @@ const VIDEOS = [
     link: "https://www.tiktok.com/@lukaszorion_/video/7611170521107025174",
     title: "Treści Short Form",
     description: "Krótka forma wideo przygotowana na platformę TikTok o tematyce biegowej."
-  },
+  }
 ];
 
 /* ============================================================
@@ -860,6 +897,34 @@ VIDEOS.forEach((video, i) => {
           <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           Otworzy się w nowej karcie
         </span>
+      </div>
+    `;
+  } else if (video.source === 'google_drive') {
+    let driveUrl = video.link;
+    if (driveUrl.includes('/view')) {
+      driveUrl = driveUrl.replace('/view', '/preview').split('?')[0];
+    }
+    card.innerHTML = `
+      <div class="drive-embed-wrap">
+        <iframe src="${driveUrl}" allowfullscreen loading="lazy" title="${video.title}"></iframe>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${video.title}</div>
+        <div class="card-desc">${video.description}</div>
+      </div>
+    `;
+  } else if (video.source === 'instagram') {
+    let igUrl = video.link;
+    if (igUrl.includes('instagram.com') && !igUrl.includes('/embed')) {
+      igUrl = igUrl.split('?')[0].replace(/\/$/, '') + '/embed';
+    }
+    card.innerHTML = `
+      <div class="video-embed-wrap" style="padding-top: 100%; background: #fff;">
+        <iframe src="${igUrl}" allowfullscreen loading="lazy" title="${video.title}" scrolling="no" frameborder="0"></iframe>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${video.title}</div>
+        <div class="card-desc">${video.description}</div>
       </div>
     `;
   }
@@ -955,5 +1020,3 @@ if ('ontouchstart' in window) {
 </script>
 </body>
 </html>
-
-
