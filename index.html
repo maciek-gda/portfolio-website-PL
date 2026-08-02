@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Maciej Hebel | Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<script src="translations.js"></script>
 <style>
   :root {
     --bg: #0a0a0c;
@@ -91,6 +92,11 @@
     color: var(--accent);
     text-decoration: none;
   }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
   .nav-links { display: flex; gap: 36px; list-style: none; }
   .nav-links a {
     color: var(--muted);
@@ -101,9 +107,48 @@
     transition: color 0.3s;
   }
   .nav-links a:hover { color: var(--text); }
+
+  /* LANGUAGE SWITCHER */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 6px;
+    gap: 2px;
+  }
+  .lang-divider {
+    color: var(--muted);
+    font-size: 0.7rem;
+    opacity: 0.4;
+    user-select: none;
+  }
+  .lang-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 3px 8px;
+    border-radius: 12px;
+    transition: color 0.3s, background 0.3s, font-weight 0.3s;
+  }
+  .lang-btn:hover {
+    color: var(--text);
+  }
+  .lang-btn.active {
+    color: var(--accent);
+    background: rgba(16, 185, 129, 0.14);
+    font-weight: 700;
+  }
+
   @media(max-width:640px) {
     nav { padding: 18px 24px; }
     .nav-links { display: none; }
+    .nav-right { gap: 0; }
   }
 
   /* HERO / ABOUT */
@@ -366,7 +411,7 @@
     width: 100%;
     height: 50px;
     background: linear-gradient(to bottom, transparent 0%, var(--surface) 100%);
-    pointer-events: none; /* Pozwala na swobodne klikanie w kontrolki pod spodem! */
+    pointer-events: none;
     z-index: 10;
   }
 
@@ -560,6 +605,39 @@
   .btn-mailto:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(16,185,129,0.3); }
   .btn-mailto svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
 
+  .btn-linkedin {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 16px 36px;
+    background: transparent;
+    color: #0a66c2;
+    border: 1px solid rgba(10, 102, 194, 0.4);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 3px;
+    transition: background 0.3s, transform 0.25s, box-shadow 0.3s, border-color 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-linkedin::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 102, 194, 0.08);
+    transform: translateX(-110%);
+    transition: transform 0.4s;
+  }
+  .btn-linkedin:hover::before { transform: translateX(110%); }
+  .btn-linkedin:hover { transform: translateY(-2px); border-color: #0a66c2; box-shadow: 0 10px 30px rgba(10, 102, 194, 0.25); }
+  .btn-linkedin svg { width: 16px; height: 16px; fill: currentColor; }
+
   .contact-buttons { display: flex; flex-direction: column; gap: 12px; }
   .btn-copy {
     display: inline-flex;
@@ -638,11 +716,18 @@
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo" id="navLogo"></a>
-  <ul class="nav-links">
-    <li><a href="#about">O mnie</a></li>
-    <li><a href="#portfolio">Realizacje</a></li>
-    <li><a href="#contact">Kontakt</a></li>
-  </ul>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#about" id="navAbout">O mnie</a></li>
+      <li><a href="#portfolio" id="navPortfolio">Realizacje</a></li>
+      <li><a href="#contact" id="navContact">Kontakt</a></li>
+    </ul>
+    <div class="lang-switch">
+      <button class="lang-btn" data-lang="pl">PL</button>
+      <span class="lang-divider">/</span>
+      <button class="lang-btn" data-lang="en">EN</button>
+    </div>
+  </div>
 </nav>
 
 <!-- ABOUT -->
@@ -665,15 +750,15 @@
 <!-- DIVIDER -->
 <div class="section-divider">
   <hr>
-  <span class="section-divider-label">Realizacje</span>
+  <span class="section-divider-label" id="portfolioDividerLabel">Realizacje</span>
   <hr>
 </div>
 
 <!-- PORTFOLIO -->
 <section id="portfolio">
   <div class="portfolio-header">
-    <h2>Wybrane <br>projekty</h2>
-    <p>Produkcje, przy których miałem przyjemność pracować.</p>
+    <h2 id="portfolioTitle">Wybrane <br>projekty</h2>
+    <p id="portfolioSubtitle">Produkcje, przy których miałem przyjemność pracować.</p>
   </div>
   <div class="video-grid" id="videoGrid"></div>
 </section>
@@ -681,7 +766,7 @@
 <!-- DIVIDER -->
 <div class="section-divider">
   <hr>
-  <span class="section-divider-label">Kontakt</span>
+  <span class="section-divider-label" id="contactDividerLabel">Kontakt</span>
   <hr>
 </div>
 
@@ -693,6 +778,10 @@
       <h3 id="contactHeading"></h3>
       <p id="contactDesc"></p>
       <div class="contact-buttons">
+        <a class="btn-linkedin" id="linkedinBtn" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+          <span id="linkedinBtnLabel"></span>
+        </a>
         <a class="btn-mailto" id="contactBtn">
           <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           <span id="contactBtnLabel"></span>
@@ -713,261 +802,43 @@
 
 <script>
 /* ============================================================
-   DANE STRONY – EDYTUJ TU
+   COOKIE HELPERS & LOCALE DETECTION
    ============================================================ */
 
-const ABOUT = {
-  eyebrow: "Twórca treści wideo",
-  firstName: "Maciej",
-  lastName: "Hebel",
-  role: "Operator & Montażysta",
-  description: "Specjalizuję się w tworzeniu angażujących treści wideo, od dynamicznych reklam po reportaże. Nieustannie rozwijam swoje umiejętności studiując Produkcję Form Audiowizualnych na Uniwersytecie Gdańskim, angażując się w projekty studenckie i rozbudowując swoje doświadczenie. Poniżej znajdziesz moje wybrane prace.",
-  photos: [
-    {
-      src: "h1.jpg",
-      label: "Gimbal"
-    },
-    {
-      src: "v1.png",
-      label: "Camera rig"
-    },
-    {
-      src: "v2.png",
-      label: "Handheld"
-    }
-  ]
-};
+function getCookie(name) {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? decodeURIComponent(match[2]) : null;
+}
 
-const CONTACT = {
-  tagline: "Zróbmy\ncoś\nrazem.",
-  taglineItalic: "Napisz do mnie",
-  heading: "Masz projekt? Porozmawiajmy.",
-  description: "Jestem otwarty na współpracę przy produkcjach wideo, montażu, projektach dokumentalnych oraz treściach dla marek. Odpisuję w ciągu 24 godzin.",
-  email: "maciejhebel1@gmail.com",
-  btnLabel: "Napisz wiadomość"
-};
+function setCookie(name, value, days = 365) {
+  const d = new Date();
+  d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+  document.cookie = `${name}=${encodeURIComponent(value)};expires=${d.toUTCString()};path=/;SameSite=Lax`;
+  try {
+    localStorage.setItem(name, value);
+  } catch (e) {}
+}
 
-/* ============================================================
-   FILMY – dodawaj nowe obiekty do tej tablicy
-   source: "youtube", "tvp", "tiktok", "google_drive" lub "instagram"
-   link: URL do zasobu
-   title: tytuł
-   description: krótki opis
-   ============================================================ */
-
-const VIDEOS = [
-    {
-    source: "google_drive",
-    link: "https://drive.google.com/file/d/12frCLZHJIXQSNetVZNeuM3nijbH__BW1/view?usp=sharing",
-    title: "Adiutare | Materiał Promocyjny Dla Stowarzyszenia Ratownictwa",
-    description: "Autorski materiał w pełni zrealizowany przeze mnie dla Stowarzyszenia Ratownictwa Adiutare. Realizacja obejmowała koncepcje, zdjęcia, nagrania dźwiękowe oraz montaż."
-  },
-  {
-    source: "youtube",
-    link: "https://www.youtube.com/watch?v=bfsCjREIi98",
-    title: "CHAI | Gastronomiczna Rolka Pokazowa",
-    description: "Autorski showreel gastronomiczny pokazujący moje umiejętności realizacji krótkich form wideo."
-  },
-  {
-    source: "youtube",
-    link: "https://www.youtube.com/watch?v=z5EwPjm4fak&t",
-    title: "Showreel Montażowy",
-    description: "Przykład moich umiejętności w zakresie dynamicznego montażu i motion designu. Film wykonany w języku angielskim, ze względu na dotarcie do szerszego grona odbiorców."
-  },
-  {
-    source: "youtube",
-    link: "https://youtu.be/tnjwSxovDqw",
-    title: "Mistrzostwa Polski w Speedcubingu 2025",
-    description: "Oficjalny reportaż z Mistrzostw Polski 2025 na zlecenie organizatorów. Cały projekt jest autorski, od pracy twórczej, poprzez sfilmowanie wydarzenia, aż po montaż i koloryzację."
-  },
-  {
-    source: "youtube",
-    link: "https://www.youtube.com/watch?v=p80Y7hjNxY4",
-    title: "Speedcubing Summer Camp 2025",
-    description: "Reportaż wykonany w ramach promocji obozu układania kostki Rubika na czas. Produkcja w całości mojego autorstwa, włącznie z ujęciami z powiertrza."
-  },
-  {
-    source: "youtube",
-    link: "https://www.youtube.com/watch?v=3Q6Vmx5RtcQ",
-    title: "Materiał Na Kanał DżoDżo na YouTube",
-    description: "Reportaż z Mistrzostw Europy w Speedcubingu 2024. Projekt realizowany we współpracy z marką SONY, w którym miałem okazję brać udział w roli drugiego operatora."
-  },
-  {
-    source: "youtube",
-    link: "https://www.youtube.com/watch?v=bAYdJ2JsZXo",
-    title: "Materiał Promocyjny MOKATE",
-    description: "Materiał Promocyjny dla firmy MOKATE z Mistrzostw Polski w Speedcubingu 2024. Również całkowicie mojego autorstwa."
-  },
-  {
-    source: "tvp",
-    link: "https://vod.tvp.pl/informacje-i-publicystyka,205/magazyn-ekspresu-reporterow-odcinki,273697/odcinek-1026,S02E1026,1842171",
-    title: "Magazyn Ekspresu Reporterów TVP - Odc. 1026",
-    description: "Reportaż emitowany na antenie Telewizji Polskiej dotyczący kostki Rubika wykorzystujący część moich ujęć. Materiał rozpoczyna się w 35:33"
-  },
-  {
-    source: "tiktok",
-    link: "https://www.tiktok.com/@lukaszorion_/video/7611170521107025174",
-    title: "Treści Short Form",
-    description: "Krótka forma wideo przygotowana na platformę TikTok o tematyce biegowej."
+function getInitialLanguage() {
+  const saved = getCookie('lang') || (function() {
+    try { return localStorage.getItem('lang'); } catch(e) { return null; }
+  })();
+  if (saved && (saved === 'pl' || saved === 'en')) {
+    return saved;
   }
-];
-
-/* ============================================================
-   RENDER
-   ============================================================ */
+  const browserLang = (navigator.language || (navigator.languages && navigator.languages[0]) || '').toLowerCase();
+  if (browserLang.startsWith('pl')) {
+    return 'pl';
+  }
+  return 'en';
+}
 
 function getYouTubeId(url) {
   const match = url.match(/(?:v=|youtu\.be\/|embed\/)([^&?/]+)/);
   return match ? match[1] : null;
 }
 
-// Nav logo
-document.getElementById('navLogo').textContent = `${ABOUT.firstName} ${ABOUT.lastName}`;
-
-// About
-document.getElementById('aboutEyebrow').textContent = ABOUT.eyebrow;
-document.getElementById('aboutName').innerHTML = `<span>${ABOUT.firstName}</span><span>${ABOUT.lastName}</span>`;
-document.getElementById('aboutRole').textContent = ABOUT.role;
-document.getElementById('aboutDesc').textContent = ABOUT.description;
-
-// Photos
-const photosEl = document.getElementById('aboutPhotos');
-ABOUT.photos.forEach(p => {
-  const card = document.createElement('div');
-  card.className = 'photo-card';
-  card.innerHTML = `<img src="${p.src}" alt="${p.label}" loading="lazy"><span class="photo-card-label">${p.label}</span>`;
-  photosEl.appendChild(card);
-});
-
-// Videos
-const grid = document.getElementById('videoGrid');
-
-VIDEOS.forEach((video, i) => {
-  const card = document.createElement('div');
-  card.className = 'video-card';
-  card.style.transitionDelay = `${(i % 2) * 0.1}s`;
-
-  if (video.source === 'youtube') {
-    const ytId = getYouTubeId(video.link);
-    const embedUrl = `https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1`;
-    card.innerHTML = `
-      <div class="video-embed-wrap">
-        <iframe src="${embedUrl}" allowfullscreen loading="lazy" title="${video.title}"></iframe>
-      </div>
-      <div class="card-body">
-        <div class="card-title">${video.title}</div>
-        <div class="card-desc">${video.description}</div>
-      </div>
-    `;
-  } else if (video.source === 'tvp') {
-    card.innerHTML = `
-      <a class="tvp-card-link" href="${video.link}" target="_blank" rel="noopener noreferrer">
-        <div class="tvp-inner">
-          <div class="tvp-logo-wrap">
-            <div class="tvp-play-icon"></div>
-          </div>
-          <span class="tvp-badge">TVP VOD</span>
-        </div>
-        <div class="tvp-shine"></div>
-      </a>
-      <div class="card-body">
-        <div class="card-title">${video.title}</div>
-        <div class="card-desc">${video.description}</div>
-        <span class="card-ext-badge">
-          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          Otworzy się w nowej karcie
-        </span>
-      </div>
-    `;
-  } else if (video.source === 'tiktok') {
-    card.innerHTML = `
-      <a class="tiktok-card-link" href="${video.link}" target="_blank" rel="noopener noreferrer">
-        <div class="tvp-inner">
-          <div class="tvp-logo-wrap">
-            <div class="tvp-play-icon"></div>
-          </div>
-          <span class="tiktok-platform-badge">TikTok</span>
-        </div>
-        <div class="tvp-shine"></div>
-      </a>
-      <div class="card-body">
-        <div class="card-title">${video.title}</div>
-        <div class="card-desc">${video.description}</div>
-        <span class="card-ext-badge">
-          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          Otworzy się w nowej karcie
-        </span>
-      </div>
-    `;
-  } else if (video.source === 'google_drive') {
-    let driveUrl = video.link;
-    if (driveUrl.includes('/view')) {
-      driveUrl = driveUrl.replace('/view', '/preview').split('?')[0];
-    }
-    card.innerHTML = `
-      <div class="drive-embed-wrap">
-        <iframe src="${driveUrl}" allowfullscreen loading="lazy" title="${video.title}"></iframe>
-      </div>
-      <div class="card-body">
-        <div class="card-title">${video.title}</div>
-        <div class="card-desc">${video.description}</div>
-      </div>
-    `;
-  } else if (video.source === 'instagram') {
-    let igUrl = video.link;
-    if (igUrl.includes('instagram.com') && !igUrl.includes('/embed')) {
-      igUrl = igUrl.split('?')[0].replace(/\/$/, '') + '/embed';
-    }
-    card.innerHTML = `
-      <div class="video-embed-wrap" style="padding-top: 100%; background: #fff;">
-        <iframe src="${igUrl}" allowfullscreen loading="lazy" title="${video.title}" scrolling="no" frameborder="0"></iframe>
-      </div>
-      <div class="card-body">
-        <div class="card-title">${video.title}</div>
-        <div class="card-desc">${video.description}</div>
-      </div>
-    `;
-  }
-
-  grid.appendChild(card);
-});
-
-// Contact
-const taglineLines = CONTACT.tagline.split('\n');
-const taglineEl = document.getElementById('contactTagline');
-taglineLines.forEach(line => {
-  const span = document.createElement('span');
-  span.style.display = 'block';
-  span.textContent = line;
-  taglineEl.appendChild(span);
-});
-const emEl = document.createElement('em');
-emEl.textContent = CONTACT.taglineItalic;
-taglineEl.appendChild(emEl);
-
-document.getElementById('contactHeading').textContent = CONTACT.heading;
-document.getElementById('contactDesc').textContent = CONTACT.description;
-const btn = document.getElementById('contactBtn');
-btn.href = `mailto:${CONTACT.email}`;
-btn.querySelector('#contactBtnLabel').textContent = CONTACT.btnLabel;
-
-// Copy email button
-const copyBtn = document.getElementById('copyEmailBtn');
-const copyLabel = document.getElementById('copyEmailLabel');
-copyBtn.addEventListener('click', () => {
-  navigator.clipboard.writeText(CONTACT.email).then(() => {
-    copyLabel.textContent = 'Skopiowano';
-    copyBtn.classList.add('copied');
-    setTimeout(() => {
-      copyLabel.textContent = 'Kopiuj adres email';
-      copyBtn.classList.remove('copied');
-    }, 2000);
-  });
-});
-
-// Footer
-document.getElementById('footerName').textContent = `© ${ABOUT.firstName} ${ABOUT.lastName}`;
-document.getElementById('footerYear').textContent = new Date().getFullYear();
+let currentLang = getInitialLanguage();
 
 /* ============================================================
    INTERSECTION OBSERVER – scroll animations
@@ -980,8 +851,6 @@ const observer = new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.1 });
-
-document.querySelectorAll('.video-card, .contact-inner').forEach(el => observer.observe(el));
 
 /* ============================================================
    CUSTOM CURSOR
@@ -1006,10 +875,15 @@ function animateRing() {
 }
 animateRing();
 
-document.querySelectorAll('a, button, .video-card, .photo-card').forEach(el => {
-  el.addEventListener('mouseenter', () => { cursor.classList.add('hovering'); ring.classList.add('hovering'); });
-  el.addEventListener('mouseleave', () => { cursor.classList.remove('hovering'); ring.classList.remove('hovering'); });
-});
+function bindCursorEvents() {
+  document.querySelectorAll('a, button, .video-card, .photo-card').forEach(el => {
+    if (!el.dataset.cursorBound) {
+      el.dataset.cursorBound = 'true';
+      el.addEventListener('mouseenter', () => { cursor.classList.add('hovering'); ring.classList.add('hovering'); });
+      el.addEventListener('mouseleave', () => { cursor.classList.remove('hovering'); ring.classList.remove('hovering'); });
+    }
+  });
+}
 
 // Hide cursor on mobile
 if ('ontouchstart' in window) {
@@ -1017,6 +891,212 @@ if ('ontouchstart' in window) {
   ring.style.display = 'none';
   document.body.style.cursor = 'auto';
 }
+
+/* ============================================================
+   RENDER & I18N
+   ============================================================ */
+
+function render(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  const t = TRANSLATIONS[lang];
+
+  // Nav
+  document.getElementById('navLogo').textContent = `${t.about.firstName} ${t.about.lastName}`;
+  document.getElementById('navAbout').textContent = t.nav.about;
+  document.getElementById('navPortfolio').textContent = t.nav.portfolio;
+  document.getElementById('navContact').textContent = t.nav.contact;
+
+  // Language switch buttons active state
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+
+  // About
+  document.getElementById('aboutEyebrow').textContent = t.about.eyebrow;
+  document.getElementById('aboutName').innerHTML = `<span>${t.about.firstName}</span><span>${t.about.lastName}</span>`;
+  document.getElementById('aboutRole').textContent = t.about.role;
+  document.getElementById('aboutDesc').textContent = t.about.description;
+
+  // Photos
+  const photosEl = document.getElementById('aboutPhotos');
+  photosEl.innerHTML = '';
+  t.about.photos.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'photo-card';
+    card.innerHTML = `<img src="${p.src}" alt="${p.label}" loading="lazy"><span class="photo-card-label">${p.label}</span>`;
+    photosEl.appendChild(card);
+  });
+
+  // Dividers
+  document.getElementById('portfolioDividerLabel').textContent = t.divider.portfolio;
+  document.getElementById('contactDividerLabel').textContent = t.divider.contact;
+
+  // Portfolio Header
+  document.getElementById('portfolioTitle').innerHTML = t.portfolio.title;
+  document.getElementById('portfolioSubtitle').textContent = t.portfolio.subtitle;
+
+  // Videos Grid
+  const grid = document.getElementById('videoGrid');
+  grid.innerHTML = '';
+
+  t.portfolio.videos.forEach((video, i) => {
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    card.style.transitionDelay = `${(i % 2) * 0.1}s`;
+
+    const extBadgeHtml = `
+      <span class="card-ext-badge">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        ${t.portfolio.extBadge}
+      </span>
+    `;
+
+    if (video.source === 'youtube') {
+      const ytId = getYouTubeId(video.link);
+      const embedUrl = `https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1`;
+      card.innerHTML = `
+        <div class="video-embed-wrap">
+          <iframe src="${embedUrl}" allowfullscreen loading="lazy" title="${video.title}"></iframe>
+        </div>
+        <div class="card-body">
+          <div class="card-title">${video.title}</div>
+          <div class="card-desc">${video.description}</div>
+        </div>
+      `;
+    } else if (video.source === 'tvp') {
+      card.innerHTML = `
+        <a class="tvp-card-link" href="${video.link}" target="_blank" rel="noopener noreferrer">
+          <div class="tvp-inner">
+            <div class="tvp-logo-wrap">
+              <div class="tvp-play-icon"></div>
+            </div>
+            <span class="tvp-badge">TVP VOD</span>
+          </div>
+          <div class="tvp-shine"></div>
+        </a>
+        <div class="card-body">
+          <div class="card-title">${video.title}</div>
+          <div class="card-desc">${video.description}</div>
+          ${extBadgeHtml}
+        </div>
+      `;
+    } else if (video.source === 'tiktok') {
+      card.innerHTML = `
+        <a class="tiktok-card-link" href="${video.link}" target="_blank" rel="noopener noreferrer">
+          <div class="tvp-inner">
+            <div class="tvp-logo-wrap">
+              <div class="tvp-play-icon"></div>
+            </div>
+            <span class="tiktok-platform-badge">TikTok</span>
+          </div>
+          <div class="tvp-shine"></div>
+        </a>
+        <div class="card-body">
+          <div class="card-title">${video.title}</div>
+          <div class="card-desc">${video.description}</div>
+          ${extBadgeHtml}
+        </div>
+      `;
+    } else if (video.source === 'google_drive') {
+      let driveUrl = video.link;
+      if (driveUrl.includes('/view')) {
+        driveUrl = driveUrl.replace('/view', '/preview').split('?')[0];
+      }
+      card.innerHTML = `
+        <div class="drive-embed-wrap">
+          <iframe src="${driveUrl}" allowfullscreen loading="lazy" title="${video.title}"></iframe>
+        </div>
+        <div class="card-body">
+          <div class="card-title">${video.title}</div>
+          <div class="card-desc">${video.description}</div>
+        </div>
+      `;
+    } else if (video.source === 'instagram') {
+      let igUrl = video.link;
+      if (igUrl.includes('instagram.com') && !igUrl.includes('/embed')) {
+        igUrl = igUrl.split('?')[0].replace(/\/$/, '') + '/embed';
+      }
+      card.innerHTML = `
+        <div class="video-embed-wrap" style="padding-top: 100%; background: #fff;">
+          <iframe src="${igUrl}" allowfullscreen loading="lazy" title="${video.title}" scrolling="no" frameborder="0"></iframe>
+        </div>
+        <div class="card-body">
+          <div class="card-title">${video.title}</div>
+          <div class="card-desc">${video.description}</div>
+        </div>
+      `;
+    }
+
+    grid.appendChild(card);
+    observer.observe(card);
+  });
+
+  // Contact
+  const taglineEl = document.getElementById('contactTagline');
+  taglineEl.innerHTML = '';
+  t.contact.tagline.forEach(line => {
+    const span = document.createElement('span');
+    span.style.display = 'block';
+    span.textContent = line;
+    taglineEl.appendChild(span);
+  });
+  const emEl = document.createElement('em');
+  emEl.textContent = t.contact.taglineItalic;
+  taglineEl.appendChild(emEl);
+
+  document.getElementById('contactHeading').textContent = t.contact.heading;
+  document.getElementById('contactDesc').textContent = t.contact.description;
+  const btn = document.getElementById('contactBtn');
+  btn.href = `mailto:${t.contact.email}`;
+  document.getElementById('contactBtnLabel').textContent = t.contact.btnLabel;
+
+  const linkedinBtn = document.getElementById('linkedinBtn');
+  linkedinBtn.href = t.contact.linkedinUrl;
+  document.getElementById('linkedinBtnLabel').textContent = t.contact.linkedinBtnLabel;
+
+  document.getElementById('copyEmailLabel').textContent = t.contact.copyBtnLabel;
+
+  // Footer
+  document.getElementById('footerName').textContent = `${t.footer.rights}`;
+  document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+  bindCursorEvents();
+}
+
+function switchLanguage(lang) {
+  if (lang === currentLang) return;
+  setCookie('lang', lang, 365);
+  render(lang);
+}
+
+// Initial setup
+document.addEventListener('DOMContentLoaded', () => {
+  render(currentLang);
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      switchLanguage(e.target.dataset.lang);
+    });
+  });
+});
+
+// Copy email button
+const copyBtn = document.getElementById('copyEmailBtn');
+const copyLabel = document.getElementById('copyEmailLabel');
+copyBtn.addEventListener('click', () => {
+  const t = TRANSLATIONS[currentLang];
+  navigator.clipboard.writeText(t.contact.email).then(() => {
+    copyLabel.textContent = t.contact.copiedState;
+    copyBtn.classList.add('copied');
+    setTimeout(() => {
+      copyLabel.textContent = t.contact.copyBtnLabel;
+      copyBtn.classList.remove('copied');
+    }, 2000);
+  });
+});
+
+document.querySelectorAll('.contact-inner').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
